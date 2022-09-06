@@ -57,12 +57,12 @@ L.control.layers(baseMaps).addTo(map);
 let torontoData = "https://raw.githubusercontent.com/miwermi/mapping-earthquakes/main/torontoRoutes.json";
 
 let lineStyle = {
-  color: "#ffdd99",
+  color: "#0088FF",
   weight: 2
 }
 
 // Grabbing our GeoJSON data.
-d3.json(torontoHoods).then(function(data) {
+d3.json(torontoData).then(function(data) {
   L.geoJson(data,{
     style : lineStyle,
     onEachFeature : function(feature,layer) {
