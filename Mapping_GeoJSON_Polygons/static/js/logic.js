@@ -38,8 +38,8 @@ L.control.layers(baseMaps).addTo(map);
 
 let lineStyle = {
   color: "#0088FF",
-  weight: 2*/
-}
+  weight: 2
+}*/
 
 // Accessing the Toronto neighborhoods GeoJSON URL.
 let torontoHoods = "https://raw.githubusercontent.com/miwermi/mapping-earthquakes/main/torontoNeighborhoods.json";
