@@ -1,4 +1,6 @@
 # Mapping Earthquakes
+<img src="https://github.com/miwermi/mapping-earthquakes/blob/main/graphics/plates-n-quakes_D1.png" alt="Satellite Image of Earthquakes and Tectonic Plates" title="Satellite Image of Earthquakes and Tectonic Plates">
+
 
 ## Purpose
 
@@ -12,3 +14,4 @@ To complete this project, I used GeoJSON earthquake data from the USGS website. 
 
 I used JavaScript and the D3.js library to pull the coordinates and magnitudes of earthquakes from the GeoJSON data and the Leaflet library to plot the data on a Mapbox map through an API request. I also created interactivity for the earthquake data via map legends.
 
+<img src="https://github.com/miwermi/mapping-earthquakes/blob/main/graphics/plates-n-quakes_D3.png" alt="Street View Image of Earthquakes (MAJOR) and Tectonic Plates" title="Street View Image of Earthquakes (MAJOR) and Tectonic Plates">
