@@ -31,14 +31,35 @@ let map = L.map('mapid', {
 L.control.layers(baseMaps).addTo(map);
 
 // Retrieve the earthquake GeoJSON data...
-d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson").then(function(data) {
-  // Creating a GeoJSON layer with the retrieved data.
-  L.geoJSON(data, {
-    pointToLayer: function(feature, latlng) {
-      console.log(data);
-      return L.circleMarker(latlng);
-  },
-}).addTo(map);
+let earthquakeData = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson";
+
+d3.json(earthquakeData).then(function(data) {
+// Styling the plot by radius feature (mapped to size)    
+    function styleInfo(feature) {
+        return {
+        opacity: 1,
+        fillOpacity: 1,
+        fillColor: "#ffae42",
+        color: "#000000",
+        radius: getRadius(),
+        stroke: true,
+        weight: 0.5
+    };
+
+// Determining the radius by magnitude...
+    function getRadius(magnitude) {
+    if (magnitude === 0) {
+        return 1;
+        }
+        return magnitude * 4;
+        };
+    }
+// Mapping the data...    
+    L.geoJSON(data, {
+        pointToLayer: function(feature, latlng) {
+        console.log(data);
+        return L.circleMarker(latlng);
+    },
+    style: styleInfo
+    }).addTo(map);
 });
-
-
