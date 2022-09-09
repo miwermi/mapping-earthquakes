@@ -27,26 +27,26 @@ let baseMaps = {
   "Satellite": satelliteStreets
 };
 
-// Adding layers for earthquake and tectonic plate data.
+// Adding layers for earthquake and tectonic plate data - & majorQuakes.
 let allEarthquakes = new L.LayerGroup();
 let tectonicPlates = new L.LayerGroup();
+let majorQuakes = new L.LayerGroup();
 
 // 2. Add a reference to the tectonic plates group to the overlays object.
 let overlays = {
   "Earthquakes": allEarthquakes,
-  "Tectonic Plates": tectonicPlates
+  "Tectonic Plates": tectonicPlates,
+  "Major Earthquakes": majorQuakes
 };
 
-// Then we add a control to the map that will allow the user to change which
-// layers are visible.
+// Adding a control to the map that allows user to change which layers are visible.
 L.control.layers(baseMaps, overlays).addTo(map);
 
-// Retrieve the earthquake GeoJSON data.
+// Retrieving earthquake GeoJSON data:
 d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson").then(function(data) {
 
-  // This function returns the style data for each of the earthquakes we plot on
-  // the map. We pass the magnitude of the earthquake into two separate functions
-  // to calculate the color and radius.
+  // Function to return style data for each quakes by mag. 
+  // (separate functions to calculate the color and radius)
   function styleInfo(feature) {
     return {
       opacity: 1,
@@ -59,7 +59,7 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
     };
   }
 
-  // This function determines the color of the marker based on the magnitude of the earthquake.
+  // Function to determine color of the marker based on the mag.
   function getColor(magnitude) {
     if (magnitude > 5) {
       return "#ea2c2c";
@@ -79,8 +79,8 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
     return "#98ee00";
   }
 
-  // This function determines the radius of the earthquake marker based on its magnitude.
-  // Earthquakes with a magnitude of 0 were being plotted with the wrong radius.
+  // Function to determine the radius of the hquake marker based on its mag
+  // (Earthquakes with a mag of 0 were being plotted with the wrong radius - this adjusts)
   function getRadius(magnitude) {
     if (magnitude === 0) {
       return 1;
@@ -88,18 +88,17 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
     return magnitude * 4;
   }
 
-  // Creating a GeoJSON layer with the retrieved data.
+  // Creating a GeoJSON layer with the retrieved data
   L.geoJson(data, {
-    	// We turn each feature into a circleMarker on the map.
+    	// Truning each feature into a circleMarker on the map.
     	pointToLayer: function(feature, latlng) {
       		console.log(data);
       		return L.circleMarker(latlng);
         },
-      // We set the style for each circleMarker using our styleInfo function.
+    // Setting the style for each circleMarker...
     style: styleInfo,
-     // We create a popup for each circleMarker to display the magnitude and location of the earthquake
-     //  after the marker has been created and styled.
-     onEachFeature: function(feature, layer) {
+    // Creating a popup for each circleMarker to display the mag+loc of the quake after the marker has been created and styled.
+    onEachFeature: function(feature, layer) {
       layer.bindPopup("Magnitude: " + feature.properties.mag + "<br>Location: " + feature.properties.place);
     }
   }).addTo(allEarthquakes);
@@ -108,12 +107,66 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
   allEarthquakes.addTo(map);
   tectonicPlates.addTo(map);
 
-  // Here we create a legend control object.
+
+//**************************** MAJOR QUAKES ****************************
+// Adding major earthquakes geoJSON... (mag 4.5 or more)
+let majorQuakes = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_week.geojson";
+
+d3.json(majorQuakes).then(function(data) {
+  function styleInfo(feature) {
+    return {
+      opacity: 1,
+      fillOpacity: 1,
+      fillColor: getColor(feature.properties.mag),
+      color: "#000000",
+      radius: getRadius(feature.properties.mag),
+      stroke: true,
+      weight: 0.5
+    };
+  }
+
+// Picking three colors for viewing... (colored by)
+  function getColor(magnitude) {
+    if (magnitude > 5) {
+      return "#CC0000";
+    }
+    if (magnitude > 4) {
+      return "#00CC00";
+    }
+    return "#0000CC";
+  }
+
+  //  Using a function to determine radius by magnitude
+  function getRadius(magnitude) {
+    if (magnitude === 0) {
+      return 1;
+    }
+    return magnitude * 4;
+  }
+
+  // Creating a GeoJSON layer with the retrieved data that adds a circle to the map 
+  // sets the style of the circle, and displays the magnitude and location of the earthquake
+  // after the marker has been created and styled.
+  L.geoJson(data, {
+    pointToLayer: function(feature, latlng) {
+    return L.circleMarker(latlng);
+    },
+    style: styleInfo,
+    onEachFeature: function(feature, layer) {
+      layer.bindPopup("Magnitude: " + feature.properties.mag + "<br>Location: " + feature.properties.place);
+    }
+  }).addTo(majorQuakes);
+  });
+  // Adding the major earthquakes layer to the map.
+  majorQuakes.addTo(map);
+});
+
+// Creating a legend control object.
 let legend = L.control({
   position: "bottomright"
 });
 
-// Then add all the details for the legend
+// Adding legend details
 legend.onAdd = function() {
   let div = L.DomUtil.create("div", "info legend");
 
@@ -135,12 +188,12 @@ legend.onAdd = function() {
       magnitudes[i] + (magnitudes[i + 1] ? "&ndash;" + magnitudes[i + 1] + "<br>" : "+");
     }
     return div;
-  };
+};
 
-  // Finally, we our legend to the map.
-  legend.addTo(map);
+// Finally, we our legend to the map.
+legend.addTo(map);
 
-
+//****************************TECTONIC PLATE LAYER****************************
 
 // Adding our Tectonic Plate geoJSON data from fraxen GH user...
 let tectonicdata = "https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json";
@@ -155,5 +208,5 @@ d3.json(tectonicdata).then(function(data) {
 
 });
 
-});
+
     
