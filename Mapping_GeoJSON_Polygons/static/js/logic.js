@@ -44,8 +44,22 @@ let lineStyle = {
 // Accessing the Toronto neighborhoods GeoJSON URL.
 let torontoHoods = "https://raw.githubusercontent.com/miwermi/mapping-earthquakes/main/torontoNeighborhoods.json";
 
+let lineStyle = {
+  color: "#0088FF",
+  weight: 1
+}
+
 // Grabbing our GeoJSON data.
-d3.json(torontoHoods).then(function(data) {
+/*d3.json(torontoHoods).then(function(data) {
   console.log(data);
   L.geoJson(data).addTo(map);
+  });*/
+
+// Skill drill
+d3.json(torontoHoods).then(function(data) {
+  L.geoJson(data,{
+    style : lineStyle,
+    onEachFeature : function(feature,layer) {
+      layer.bindPopup("<h3> Area Name: "+ feature.properties.AREA_NAME + "</h3>");  }
+  }).addTo(map);
   });
