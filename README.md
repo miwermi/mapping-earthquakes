@@ -4,7 +4,7 @@
 
 ## Purpose
 
-The purpose of this project was to collect publically available earthquake data and to visually show the differences between the magnitudes of earthquakes all over the world for the last seven days.
+The purpose of this project was to collect publicly available earthquake data and to visually show the differences between the magnitudes of earthquakes all over the world for the last seven days.
 
 ## Tasks
 
